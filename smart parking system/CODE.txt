@@ -1,0 +1,26 @@
+module smart_parking (
+    input clk,
+    input reset,
+    input entry,
+    input exit,
+    output reg [3:0] car_count,
+    output LED
+);
+
+  parameter MAX_CAPACITY = 4; // Maximum parking capacity
+
+  always @(posedge clk or posedge reset) begin
+    if (reset)
+      car_count <= 0;
+    else begin
+      if (entry && car_count < MAX_CAPACITY)
+        car_count <= car_count + 1;
+      if (exit && car_count > 0)
+        car_count <= car_count - 1;
+    end
+  end
+
+  // LED turns ON if parking is full
+  assign LED = (car_count == MAX_CAPACITY);
+
+endmodule

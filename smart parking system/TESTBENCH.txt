@@ -1,0 +1,56 @@
+`timescale 1ns / 1ps
+
+module testbench;
+  
+  reg clk, reset;
+  reg entry, exit;
+  wire [3:0] car_count;
+  wire LED;  // LED indicator for parking availability
+
+  // Instantiate the smart parking system module
+  smart_parking uut (
+    .clk(clk),
+    .reset(reset),
+    .entry(entry),
+    .exit(exit),
+    .car_count(car_count),
+    .LED(LED)
+  );
+
+  // Clock Generation
+  always #5 clk = ~clk;  // Generate a clock with period of 10ns
+
+  initial begin
+    // VCD file for waveform
+    $dumpfile("wave.vcd");
+    $dumpvars(0, testbench);
+    
+    // Initialize signals
+    clk = 0;
+    reset = 1;
+    entry = 0;
+    exit = 0;
+
+    #10 reset = 0;  // Deassert reset
+
+    // Simulate car entry
+    #10 entry = 1;
+    #10 entry = 0;
+
+    // Another car enters
+    #10 entry = 1;
+    #10 entry = 0;
+
+    // One car exits
+    #20 exit = 1;
+    #10 exit = 0;
+
+    // Another car exits
+    #20 exit = 1;
+    #10 exit = 0;
+
+    // End simulation
+    #50 $finish;
+  end
+
+endmodule
